@@ -56,7 +56,7 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
   const destX = centers[comm.dest.name];
 
   const color = comm.isFailure ? 'red' : 'black';
-  const isLoopback = comm.source === comm.dest;
+  const isLoopback = comm.source.name === comm.dest.name;
 
   const dashArray = comm.isResponse ? '5 5' : undefined;
 
