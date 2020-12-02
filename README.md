@@ -2,11 +2,11 @@
 NPM package to draw network sequence diagram SVGs
 
 ## Usage
-See [Sample.tsx](./sample/src/Sample.tsx) for example usage.
+See the [Samples](./samples) for example usage.
 
-## Sample
-To run the sample, do the following:
-1. `cd sample`
+## Samples
+To run the samples, do the following:
+1. `cd samples/<name>`
 1. `npm i`
 1. `npm start`
 

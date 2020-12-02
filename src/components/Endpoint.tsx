@@ -1,19 +1,16 @@
-import React from 'react';
 import { BOX_PADDING, FONT_SIZE } from '../constants';
 import { calcTextLength } from '../helpers';
 
-interface EndpointProps {
+type EndpointProps = {
   text: string;
   transform: string;
   diagHeight: number;
-}
+};
 
-export const Endpoint: React.FC<EndpointProps> = (props) => {
-  const { text, transform, diagHeight } = props;
-
+export function Endpoint({ text, transform, diagHeight }: EndpointProps) {
   const headingHeight = FONT_SIZE + BOX_PADDING * 2;
   const width = calcTextLength(text, FONT_SIZE);
-  const boxColor = 'lightgrey'
+  const boxColor = 'lightgrey';
 
   return (
     <g transform={transform}>
@@ -25,8 +22,8 @@ export const Endpoint: React.FC<EndpointProps> = (props) => {
       <text
         x={BOX_PADDING}
         dy={FONT_SIZE}
-        fontSize={FONT_SIZE}
-        fontFamily={'monospace'}
+        font-size={FONT_SIZE}
+        font-family={'monospace'}
         textLength={width}
       >
         {text}
@@ -37,8 +34,8 @@ export const Endpoint: React.FC<EndpointProps> = (props) => {
         y1={headingHeight}
         y2={diagHeight}
         stroke={boxColor}
-        strokeWidth={1}
+        stroke-width={1}
       />
     </g>
   );
-};
+}

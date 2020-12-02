@@ -1,30 +1,25 @@
-import React, { useRef } from 'react';
-import { SequenceDiagram, Communication, NamedEndpoint, RequestData, Message, SequenceDiagramOptions } from 'seqdiag';
+import { Communication, NamedEndpoint, renderSequenceDiagram } from 'seqdiag';
 
-const Sample: React.FC = props => {
-  const svgRef = useRef<SVGSVGElement>();
-  const { errors, traces, options, requestData } = sampleSipCall();
+const svgContainer = document.createElement('div');
+renderSequenceDiagram(svgContainer, sampleSipCall());
 
-  const downloadSvg = () => {
-    const svgData = '<?xml version="1.0" encoding="UTF-8"?>\r\n' + svgRef.current.outerHTML;
-  
-    const data = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const csvURL = window.URL.createObjectURL(data);
-    const tempLink = document.createElement('a');
-    tempLink.href = csvURL;
-    tempLink.setAttribute('download', `diagram.svg`);
-    tempLink.click();
-  }
+const downloadButton = document.createElement('button');
+downloadButton.onclick = () => downloadSvg();
+downloadButton.innerText = 'Download';
 
-  return (
-    <>
-      <SequenceDiagram errors={errors} traces={traces} options={options} requestData={requestData} svgContainerRef={svgRef}/>
-      <button onClick={downloadSvg}>Download</button>
-    </>
-  );
-};
+document.body.appendChild(svgContainer);
+document.body.appendChild(downloadButton);
 
-export default Sample;
+function downloadSvg() {
+  const svgData = '<?xml version="1.0" encoding="UTF-8"?>\r\n' + svgContainer.innerHTML;
+
+  const data = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+  const csvURL = window.URL.createObjectURL(data);
+  const tempLink = document.createElement('a');
+  tempLink.href = csvURL;
+  tempLink.setAttribute('download', `diagram.svg`);
+  tempLink.click();
+}
 
 function sampleSipCall() {
   const startTime = new Date(2020, 10, 10, 10, 10, 10);

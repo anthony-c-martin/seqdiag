@@ -1,13 +1,13 @@
-import React, { Fragment, RefObject } from 'react';
 import { Message, RequestData, Communication, SequenceDiagramOptions } from '../types';
 import { ARROW_SPACING, BOX_MARGIN, BOX_PADDING, FONT_SIZE, FONT_SIZE_LABEL, MAX_LABEL_LEGNTH, SVG_PADDING } from '../constants';
 import { calcTextLength, formatTimestamp, orderCommunications, truncate, wrapText } from '../helpers';
 import { Endpoint } from './Endpoint';
+import { ComponentChild, render, VNode } from 'preact';
 
 interface BoundedElement {
   height: number;
   width: number;
-  content: JSX.Element;
+  content: any;
 }
 
 interface TimedBoundedElement extends BoundedElement {
@@ -21,27 +21,26 @@ interface DiagramContext {
   marginY: number;
 }
 
-interface SequenceDiagramProps {
+export interface SequenceDiagramProps {
   traces: Message[];
   errors: Message[];
   options: SequenceDiagramOptions;
   requestData: RequestData;
-  svgContainerRef?: RefObject<SVGSVGElement>
 }
 
 function renderTiming(element: TimedBoundedElement, requestData: RequestData, options: SequenceDiagramOptions): BoundedElement {
   const timestampString = formatTimestamp(element.timestamp, requestData.startTime, options.showTimestampOffset);
   const content = (
-    <Fragment>
+    <>
       <text
         dy={FONT_SIZE_LABEL}
-        fontSize={FONT_SIZE_LABEL}
-        fontFamily="monospace"
+        font-size={FONT_SIZE_LABEL}
+        font-family="monospace"
         fill="blue"
       >
         {timestampString}
       </text>
-    </Fragment>
+    </>
   );
 
   return {
@@ -69,9 +68,9 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
         y1={ARROW_SPACING}
         y2={ARROW_SPACING}
         stroke={color}
-        strokeWidth={1}
-        strokeDasharray={dashArray}
-        markerEnd={`url(#end-${color})`}
+        stroke-width={1}
+        stroke-dasharray={dashArray}
+        marker-end={`url(#end-${color})`}
       />
     );
   } else {
@@ -83,9 +82,9 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
           curveWidth},${ARROW_SPACING + height + height} ${sourceX},${ARROW_SPACING + height}`}
         fill="transparent"
         stroke={color}
-        strokeWidth={1}
-        strokeDasharray={dashArray}
-        markerEnd={`url(#end-${color})`}
+        stroke-width={1}
+        stroke-dasharray={dashArray}
+        marker-end={`url(#end-${color})`}
       />
     );
   }
@@ -94,10 +93,10 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
   if (comm.isTimeout) {
     const midpointX = (destX + sourceX) / 2;
     timeout = (
-      <Fragment>
+      <>
         <line x1={midpointX - (FONT_SIZE_LABEL / 2)} x2={midpointX + (FONT_SIZE_LABEL / 2)} y1={ARROW_SPACING - (FONT_SIZE_LABEL / 2)} y2={ARROW_SPACING + (FONT_SIZE_LABEL / 2)} stroke={color} />
         <line x1={midpointX - (FONT_SIZE_LABEL / 2)} x2={midpointX + (FONT_SIZE_LABEL / 2)} y1={ARROW_SPACING + (FONT_SIZE_LABEL / 2)} y2={ARROW_SPACING - (FONT_SIZE_LABEL / 2)} stroke={color} />
-      </Fragment>
+      </>
     )
   }
 
@@ -120,12 +119,12 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
   }
 
   const content = (
-    <Fragment>
+    <>
       <text
         x={arrowDescX}
         dy={FONT_SIZE_LABEL}
-        fontSize={FONT_SIZE_LABEL}
-        fontFamily={'monospace'}
+        font-size={FONT_SIZE_LABEL}
+        font-family={'monospace'}
         fill={color}
         textLength={descWidth}
       >
@@ -141,8 +140,8 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
       <text
         x={arrowDescX + descWidth + (BOX_PADDING * 2)}
         dy={FONT_SIZE_LABEL}
-        fontSize={FONT_SIZE_LABEL}
-        fontFamily={'monospace'}
+        font-size={FONT_SIZE_LABEL}
+        font-family={'monospace'}
         fill={'black'}
         textLength={indexTextWidth}
       >
@@ -150,7 +149,7 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
       </text>
       {arrow}
       {timeout}
-    </Fragment>
+    </>
   );
 
   return {
@@ -167,7 +166,7 @@ function renderMessageLine(error: Message, color: string): TimedBoundedElement {
   
   const width = calcTextLength(longestLine, FONT_SIZE_LABEL);
   const content = (
-    <Fragment>
+    <>
       <rect
         fill={color}
         opacity={'75%'}
@@ -181,15 +180,15 @@ function renderMessageLine(error: Message, color: string): TimedBoundedElement {
           y={i * FONT_SIZE_LABEL}
           x={BOX_PADDING}
           dy={FONT_SIZE_LABEL + BOX_PADDING}
-          fontSize={FONT_SIZE_LABEL}
-          fontFamily={'monospace'}
+          font-size={FONT_SIZE_LABEL}
+          font-family={'monospace'}
           fill={'black'}
           textLength={calcTextLength(line, FONT_SIZE_LABEL)}
         >
           {line}
         </text>
       ))}
-    </Fragment>
+    </>
   );
 
   return {
@@ -200,12 +199,10 @@ function renderMessageLine(error: Message, color: string): TimedBoundedElement {
   };
 }
 
-export const SequenceDiagram: React.FC<SequenceDiagramProps> = props => {
-  if (props.requestData.communications.length === 0) {
-    return null;
+export function SequenceDiagram({ requestData, errors, traces, options }: SequenceDiagramProps): VNode<SVGSVGElement> {
+  if (requestData.communications.length === 0) {
+    return <svg xmlns="http://www.w3.org/2000/svg" width={0} height={0}/>;
   }
-
-  const { requestData, errors, traces, options, svgContainerRef } = props;
 
   const orderedComms = orderCommunications(requestData.communications);
   const lineHeight = ARROW_SPACING * 2;
@@ -291,7 +288,6 @@ export const SequenceDiagram: React.FC<SequenceDiagramProps> = props => {
       width={context.marginX + context.width + (SVG_PADDING * 2)}
       height={context.marginY + context.height + (SVG_PADDING * 2)}
       xmlns="http://www.w3.org/2000/svg"
-      ref={svgContainerRef}
     >
       <rect
         width={context.marginX + context.width + (SVG_PADDING * 2)}
