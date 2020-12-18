@@ -1,4 +1,4 @@
-import { Communication, NamedEndpoint, renderSequenceDiagram } from 'seqdiag';
+import { Communication, NamedEndpoint, renderSequenceDiagram, SequenceDiagramProps } from 'seqdiag';
 
 const svgContainer = document.createElement('div');
 renderSequenceDiagram(svgContainer, sampleSipCall());
@@ -21,7 +21,7 @@ function downloadSvg() {
   tempLink.click();
 }
 
-function sampleSipCall() {
+function sampleSipCall(): SequenceDiagramProps {
   const startTime = new Date(2020, 10, 10, 10, 10, 10);
   const timeAt = (index: number) => {
     return new Date(startTime.getTime() + (20 * index));

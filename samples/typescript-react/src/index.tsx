@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Communication, NamedEndpoint } from 'seqdiag';
+import { Communication, NamedEndpoint, SequenceDiagramProps } from 'seqdiag';
 import { SequenceDiagramContainer } from './SequenceDiagramContainer';
 
 ReactDOM.render(<SequenceDiagramContainer data={sampleSipCall()}/>, document.getElementById("root"));
 
-function sampleSipCall() {
+function sampleSipCall(): SequenceDiagramProps {
   const startTime = new Date(2020, 10, 10, 10, 10, 10);
   const timeAt = (index: number) => {
     return new Date(startTime.getTime() + (20 * index));

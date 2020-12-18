@@ -162,7 +162,7 @@ function renderRequestLine(centers: { [endpoint: string]: number }, comm: Commun
 
 function renderMessageLine(error: Message, color: string): TimedBoundedElement {
   const lines = wrapText(error.message, MAX_LABEL_LEGNTH);
-  const longestLine = lines.sort((a, b) => a.length - b.length)[0];
+  const longestLine = lines.sort((a, b) => b.length - a.length)[0];
   
   const width = calcTextLength(longestLine, FONT_SIZE_LABEL);
   const content = (
