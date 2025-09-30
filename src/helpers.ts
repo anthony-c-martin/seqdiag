@@ -2,6 +2,9 @@ import { FONT_SIZE } from "./constants";
 import { Communication, RequestData } from "./types";
 
 export function calcTextLength(text: string, fontSize: number) {
+  if(!text) {
+    return 0;
+  }
   return (text.length * 8 * fontSize) / FONT_SIZE;
 }
 
